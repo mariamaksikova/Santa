@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} - Комната</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <div class="container">
+        <div class="santa-image">
+            <div class="santa-icon">🎅</div>
+        </div>
+
+        <h1 class="title">Комната</h1>
+
+        <div class="room-info" id="roomInfo">
+            <div class="loading">Загрузка...</div>
+        </div>
+
+        <div class="participants-section" id="participantsSection" style="display: none;">
+            <h2 class="section-title">Участники</h2>
+            <div class="participants-list" id="participantsList"></div>
+        </div>
+
+        <div class="assignment-section" id="assignmentSection" style="display: none;">
+            <h2 class="section-title">Твоё назначение</h2>
+            <div class="assignment-card" id="assignmentCard"></div>
+        </div>
+    </div>
+
+    <script>
+        const code = '{{CODE}}';
+        let participantId = null;
+
+        // Получаем participant_id из localStorage или URL
+        const urlParams = new URLSearchParams(window.location.search);
+        participantId = urlParams.get('participant_id') || localStorage.getItem('participant_id_' + code);
+
+        async function loadRoomInfo() {
+            try {
+                const response = await fetch(`/api/room/${code}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('roomInfo').innerHTML =
+                        `<div class="error">${data.error}</div>`;
+                    return;
+                }
+
+                // Отображаем информацию о комнате
+                document.getElementById('roomInfo').innerHTML = `
+                    <div class="info-card">
+                        <div class="info-item">
+                            <span class="info-label">Участников:</span>
+                            <span class="info-value">${data.current_count} / ${data.max_participants}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Статус:</span>
+                            <span class="info-value status-${data.status}">${data.status === 'started' ? 'Игра началась!' : 'Ожидание участников...'}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Отображаем список участников
+                if (data.participants.length > 0) {
+                    document.getElementById('participantsSection').style.display = 'block';
+                    const participantsHtml = data.participants.map(p => `
+                        <div class="participant-card">
+                            <div class="participant-name">${p.name}</div>
+                            ${p.wishes ? `<div class="participant-wishes">🎁 ${p.wishes}</div>` : ''}
+                        </div>
+                    `).join('');
+                    document.getElementById('participantsList').innerHTML = participantsHtml;
+                }
+
+                // Если игра началась и есть participant_id, показываем назначение
+                if (data.status === 'started' && participantId) {
+                    loadAssignment(participantId);
+                }
+            } catch (error) {
+                document.getElementById('roomInfo').innerHTML =
+                    `<div class="error">Ошибка загрузки: ${error.message}</div>`;
+            }
+        }
+
+        async function loadAssignment(pid) {
+            try {
+                const response = await fetch(`/api/assignment/${code}/${pid}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    return;
+                }
+
+                document.getElementById('assignmentSection').style.display = 'block';
+                document.getElementById('assignmentCard').innerHTML = `
+                    <div class="assignment-content">
+                        <div class="assignment-icon">🎁</div>
+                        <div class="assignment-text">
+                            <p class="assignment-label">Ты даришь подарок:</p>
+                            <p class="assignment-name">${data.receiver_name}</p>
+                            ${data.wishes ? `<p class="assignment-wishes">💝 Пожелания: ${data.wishes}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Ошибка загрузки назначения:', error);
+            }
+        }
+
+        // Загружаем информацию при загрузке страницы
+        loadRoomInfo();
+
+        // Обновляем каждые 3 секунды, если игра ещё не началась
+        setInterval(() => {
+            fetch(`/api/room/${code}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'waiting') {
+                        loadRoomInfo();
+                    }
+                });
+        }, 3000);
+    </script>
+</body>
+
+</html>

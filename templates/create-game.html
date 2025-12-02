@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ТайныйСанта</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <div class="container">
+        <div class="santa-image">
+            <div class="santa-icon">🎅</div>
+        </div>
+        
+        <h1 class="title">🎅 Тайный Санта</h1>
+        <p class="subtitle">Создай игру Тайного Санты за 30 секунд!</p>
+
+        <div class="form-card">
+            <h2 class="form-title">Создать игру</h2>
+
+            <div class="form-group">
+                <input type="text" id="title" placeholder="Новогодний Тайный Санта 2025" 
+                    class="form-input" value="Новогодний Тайный Санта 2025">
+                <input type="number" id="budget" placeholder="Бюджет на подарок (₽)" 
+                    class="form-input" value="3000">
+                <input type="number" id="max_participants" placeholder="Максимум участников" 
+                    class="form-input" value="10" min="2">
+                <button onclick="createGame()" class="btn-white">
+                    🎁 Создать игру!
+                </button>
+            </div>
+        </div>
+
+        <div id="result" class="result-container"></div>
+    </div>
+
+    <script>
+        async function createGame() {
+            const title = document.getElementById('title').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            const max_participants = parseInt(document.getElementById('max_participants').value);
+
+            if (!title.trim()) {
+                alert('Введите название игры!');
+                return;
+            }
+
+            if (max_participants < 2) {
+                alert('Минимум 2 участника!');
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerHTML = '⏳ Создаём...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/create-game', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, budget, max_participants })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('result').innerHTML = `
+                        <div class="success-card">
+                            <h3 class="success-title">🎉 Игра создана!</h3>
+                            <p class="success-text">Приглашай друзей:</p>
+                            <div class="link-box">
+                                <a href="${data.invite_link}" target="_blank" class="link-text">
+                                    ${window.location.origin}${data.invite_link}
+                                </a>
+                            </div>
+                            <p class="code-text">Код приглашения: ${data.invite_link.split('/').pop()}</p>
+                            <a href="${data.room_link}" class="btn-white btn-link">Перейти в комнату</a>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Ошибка создания');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <div class="error-card">
+                        ❌ Ошибка: ${error.message}
+                    </div>
+                `;
+            }
+
+            btn.innerHTML = '🎁 Создать игру!';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+
+</html>
+

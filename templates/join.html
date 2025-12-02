@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} - Тайный Санта</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <div class="container">
+        <div class="santa-image">
+            <div class="santa-icon">🎅</div>
+        </div>
+
+        <h1 class="title">🎅 Комната</h1>
+        <p class="subtitle">Присоединяйся к игре Тайного Санты!</p>
+
+        <div class="form-card">
+            <h2 class="form-title">Твои данные</h2>
+
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Как тебя зовут?" class="form-input" required>
+                <textarea id="wishes" placeholder="Чего бы ты хотел получить? (необязательно)" rows="4"
+                    class="form-input form-textarea"></textarea>
+                <button onclick="joinGame('{{CODE}}')" class="btn-white">
+                    ✅ Присоединиться к игре
+                </button>
+            </div>
+        </div>
+
+        <div id="result" class="result-container"></div>
+    </div>
+
+    <script>
+        async function joinGame(code) {
+            const name = document.getElementById('name').value;
+            const wishes = document.getElementById('wishes').value;
+
+            if (!name.trim()) {
+                alert('Введите имя!');
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerHTML = '⏳ Присоединяемся...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/join', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code,
+                        name,
+                        wishes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Сохраняем participant_id
+                    localStorage.setItem('participant_id_' + code, data.participant_id);
+
+                    // Редирект на страницу комнаты
+                    if (data.room_link) {
+                        window.location.href = data.room_link + '?participant_id=' + data.participant_id;
+                    } else {
+                        document.getElementById('result').innerHTML = `
+                            <div class="success-card">
+                                <h3 class="success-title">🎉 Добро пожаловать, ${data.name}!</h3>
+                                <p class="success-text">Ты успешно присоединился к игре.</p>
+                                ${data.game_started ? 
+                                    '<p class="success-text">Игра началась! Проверь своё назначение в комнате.</p>' :
+                                    '<p class="success-text">Ожидай других участников...</p>'
+                                }
+                            </div>
+                        `;
+                        document.querySelector('button').style.display = 'none';
+                    }
+                } else {
+                    throw new Error(data.error || 'Ошибка присоединения');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <div class="error-card">
+                        ❌ Ошибка: ${error.message}
+                    </div>
+                `;
+            }
+
+            btn.innerHTML = '✅ Присоединиться к игре';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,462 @@
+/* Красный фон */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Анимация снежинок */
+.snowflakes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5em;
+    font-family: Arial, sans-serif;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    animation: fall linear infinite;
+    opacity: 0.7;
+}
+
+.snowflake:nth-of-type(1) {
+    left: 10%;
+    animation-duration: 10s;
+    animation-delay: 0s;
+}
+
+.snowflake:nth-of-type(2) {
+    left: 20%;
+    animation-duration: 12s;
+    animation-delay: 1s;
+}
+
+.snowflake:nth-of-type(3) {
+    left: 30%;
+    animation-duration: 14s;
+    animation-delay: 2s;
+}
+
+.snowflake:nth-of-type(4) {
+    left: 40%;
+    animation-duration: 11s;
+    animation-delay: 0.5s;
+}
+
+.snowflake:nth-of-type(5) {
+    left: 50%;
+    animation-duration: 13s;
+    animation-delay: 1.5s;
+}
+
+.snowflake:nth-of-type(6) {
+    left: 60%;
+    animation-duration: 15s;
+    animation-delay: 2.5s;
+}
+
+.snowflake:nth-of-type(7) {
+    left: 70%;
+    animation-duration: 10s;
+    animation-delay: 0.3s;
+}
+
+.snowflake:nth-of-type(8) {
+    left: 80%;
+    animation-duration: 12s;
+    animation-delay: 1.3s;
+}
+
+.snowflake:nth-of-type(9) {
+    left: 90%;
+    animation-duration: 14s;
+    animation-delay: 2.3s;
+}
+
+.snowflake:nth-of-type(10) {
+    left: 15%;
+    animation-duration: 11s;
+    animation-delay: 0.7s;
+}
+
+.snowflake:nth-of-type(11) {
+    left: 25%;
+    animation-duration: 13s;
+    animation-delay: 1.7s;
+}
+
+.snowflake:nth-of-type(12) {
+    left: 35%;
+    animation-duration: 15s;
+    animation-delay: 2.7s;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0.3;
+    }
+}
+
+/* Контейнер */
+.container {
+    position: relative;
+    z-index: 10;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Изображение Санты */
+.santa-image {
+    margin: 20px 0;
+}
+
+.santa-icon {
+    font-size: 120px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Заголовки */
+.title {
+    font-size: 3em;
+    font-weight: bold;
+    margin: 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+
+/* Карточка формы */
+.form-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Форма */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-input {
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Белые кнопки */
+.btn-white {
+    padding: 15px 30px;
+    background: white;
+    color: #dc2626;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-white:hover {
+    background: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-white:active {
+    transform: translateY(0);
+}
+
+.btn-white:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-link {
+    display: inline-block;
+    text-decoration: none;
+    margin-top: 15px;
+}
+
+/* Результаты */
+.result-container {
+    margin-top: 20px;
+}
+
+.success-card {
+    background: rgba(34, 197, 94, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(34, 197, 94, 0.5);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.success-title {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.success-text {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.link-box {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    word-break: break-all;
+}
+
+.link-text {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.link-text:hover {
+    color: #dbeafe;
+    text-decoration: underline;
+}
+
+.code-text {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin: 10px 0;
+}
+
+.error-card {
+    background: rgba(239, 68, 68, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    font-size: 1.1em;
+}
+
+/* Страница комнаты */
+.room-info {
+    margin: 20px 0;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.info-label {
+    font-weight: bold;
+}
+
+.info-value {
+    opacity: 0.9;
+}
+
+.status-started {
+    color: #34d399;
+    font-weight: bold;
+}
+
+.status-waiting {
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.2em;
+    padding: 20px;
+}
+
+/* Участники */
+.participants-section {
+    margin: 30px 0;
+}
+
+.section-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.participants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.participant-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+.participant-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.participant-wishes {
+    font-size: 1em;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+/* Назначение */
+.assignment-section {
+    margin: 30px 0;
+}
+
+.assignment-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.assignment-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.assignment-icon {
+    font-size: 80px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.assignment-text {
+    text-align: center;
+}
+
+.assignment-label {
+    font-size: 1.2em;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.assignment-name {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 15px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.assignment-wishes {
+    font-size: 1.2em;
+    margin-top: 15px;
+    opacity: 0.95;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2em;
+    }
+    
+    .santa-icon {
+        font-size: 80px;
+    }
+    
+    .form-card {
+        padding: 20px;
+    }
+    
+    .assignment-name {
+        font-size: 2em;
+    }
+}
+
