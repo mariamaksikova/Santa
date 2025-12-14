@@ -29,10 +29,25 @@
             <div class="santa-icon">🎅</div>
         </div>
 
-        <h1 class="title">Комната</h1>
+        <h1 class="title" id="roomTitle">{{TITLE}}</h1>
 
         <div class="room-info" id="roomInfo">
             <div class="loading">Загрузка...</div>
+        </div>
+
+        <div class="registration-section" id="registrationSection" style="display: none;">
+            <div class="form-card">
+                <h2 class="form-title">Присоединиться к игре</h2>
+                <div class="form-group">
+                    <input type="text" id="regName" placeholder="Как тебя зовут?" 
+                        class="form-input" required>
+                    <textarea id="regWishes" placeholder="Чего бы ты хотел получить? (необязательно)" 
+                        rows="4" class="form-input form-textarea"></textarea>
+                    <button onclick="registerInRoom()" class="btn-white">
+                        ✅ Присоединиться к игре
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="participants-section" id="participantsSection" style="display: none;">
@@ -65,6 +80,9 @@
                     return;
                 }
 
+                // Обновляем заголовок
+                document.getElementById('roomTitle').textContent = data.title || 'Комната';
+
                 // Отображаем информацию о комнате
                 document.getElementById('roomInfo').innerHTML = `
                     <div class="info-card">
@@ -79,16 +97,29 @@
                     </div>
                 `;
 
-                // Отображаем список участников
+                // Скрываем форму регистрации, если пользователь уже зарегистрирован
+                if (participantId) {
+                    document.getElementById('registrationSection').style.display = 'none';
+                }
+
+                // Отображаем список участников (без пожеланий)
                 if (data.participants.length > 0) {
                     document.getElementById('participantsSection').style.display = 'block';
                     const participantsHtml = data.participants.map(p => `
                         <div class="participant-card">
                             <div class="participant-name">${p.name}</div>
-                            ${p.wishes ? `<div class="participant-wishes">🎁 ${p.wishes}</div>` : ''}
                         </div>
                     `).join('');
                     document.getElementById('participantsList').innerHTML = participantsHtml;
+                }
+
+                // Проверяем, зарегистрирован ли пользователь
+                // Проверяем, есть ли текущий пользователь в списке участников
+                const isRegistered = participantId && data.participants.some(p => p.id == participantId);
+                if (!isRegistered && data.status === 'waiting') {
+                    showRegistrationForm();
+                } else if (isRegistered) {
+                    document.getElementById('registrationSection').style.display = 'none';
                 }
 
                 // Если игра началась и есть participant_id, показываем назначение
@@ -124,6 +155,53 @@
             } catch (error) {
                 console.error('Ошибка загрузки назначения:', error);
             }
+        }
+
+        function showRegistrationForm() {
+            document.getElementById('registrationSection').style.display = 'block';
+        }
+
+        async function registerInRoom() {
+            const name = document.getElementById('regName').value;
+            const wishes = document.getElementById('regWishes').value;
+
+            if (!name.trim()) {
+                alert('Введите имя!');
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerHTML = '⏳ Присоединяемся...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, name, wishes })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Сохраняем participant_id
+                    localStorage.setItem('participant_id_' + code, data.participant_id);
+                    participantId = data.participant_id;
+                    
+                    // Скрываем форму регистрации
+                    document.getElementById('registrationSection').style.display = 'none';
+                    
+                    // Обновляем информацию о комнате
+                    loadRoomInfo();
+                } else {
+                    alert('Ошибка: ' + (data.error || 'Не удалось присоединиться'));
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+
+            btn.innerHTML = '✅ Присоединиться к игре';
+            btn.disabled = false;
         }
 
         // Загружаем информацию при загрузке страницы

@@ -49,3 +49,4 @@ endif()
 # Флаги компиляции
 target_compile_options(santa PRIVATE -Wall -Wextra)
 
+
